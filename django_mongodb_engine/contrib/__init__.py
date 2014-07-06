@@ -116,6 +116,8 @@ class MongoDBQuerySet(QuerySet):
             self._mongo_field_names = []
             for name in self.model._meta.get_all_field_names():
                 field = self.model._meta.get_field_by_name(name)[0]
+                if not isinstance(field, models.Field):
+                    continue
                 if '.' not in name and field.get_internal_type() in MONGO_DOT_FIELDS:
                     self._mongo_field_names.append(name)
 
