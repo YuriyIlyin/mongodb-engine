@@ -172,7 +172,7 @@ class MongoDBQuerySet(QuerySet):
                         field = field.item_field
                         field_type = list_type
                 if field_type == 'EmbeddedModelField':
-                    model = field.embedded_model()
+                    model = field.get_embedded_model_instance(model)
                 else:
                     while len(parts2) > 0:
                         part = parts2.pop(0)
