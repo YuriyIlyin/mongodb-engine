@@ -18,7 +18,7 @@ else:
 
 ON_PYPY = hasattr(sys, 'pypy_version_info')
 ALL_OPERATORS = dict(list(OPERATORS_MAP.items() + NEGATED_OPERATORS_MAP.items())).keys()
-MONGO_DOT_FIELDS = ('DictField', 'ListField', 'SetField', 'EmbeddedModelField')
+MONGO_DOT_FIELDS = ('DictField', 'ListField', 'SetField', 'EmbeddedModelField', 'CustomEmbeddedModelField')
 
 
 def _compiler_for_queryset(qs, which='SQLCompiler'):
@@ -168,11 +168,13 @@ class MongoDBQuerySet(QuerySet):
                 parts3.append(part)
                 if field_type == 'ListField':
                     list_type = field.item_field.get_internal_type()
-                    if list_type == 'EmbeddedModelField':
+                    if 'EmbeddedModelField' in list_type:
                         field = field.item_field
                         field_type = list_type
-                if field_type == 'EmbeddedModelField':
+                if field_type == 'CustomEmbeddedModelField':
                     model = field.get_embedded_model_instance(model)
+                elif field_type == 'EmbeddedModelField':
+                    model = field.embedded_model()
                 else:
                     while len(parts2) > 0:
                         part = parts2.pop(0)
